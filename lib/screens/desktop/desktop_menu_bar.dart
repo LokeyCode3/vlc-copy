@@ -10,6 +10,8 @@ import '../../providers/player_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../utils/subtitle_parser.dart';
 import '../../utils/blob_utils.dart';
+import '../../config/app_config.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DesktopMenuBar extends StatelessWidget {
   final VoidCallback onToggleSidebar;
@@ -359,14 +361,14 @@ class DesktopMenuBar extends StatelessWidget {
             label: 'Help',
             items: [
               _searchMenuItem(),
-              _menuHelpItem('ispc player Help...', () => _showAbout(context)),
+              _menuHelpItem('ispc player Help...', () => _showHelp(context)),
+              _menuItem('Privacy Policy', () => _openUrl(AppConfig.privacyPolicyUrl)),
+              _menuItem('Terms & Conditions', () => _openUrl(AppConfig.termsAndConditionsUrl)),
+              const PopupMenuDivider(),
               _menuItem('License', () => _showLicense(context)),
+              _menuItem('Online Documentation...', () => _openUrl('https://ispcorp.in')),
               const PopupMenuDivider(),
-              _menuItem('Online Documentation...', () {}),
-              _menuItem('Online Forum...', () {}),
-              _menuItem('Make a donation...', () {}),
-              const PopupMenuDivider(),
-              _menuItem('VideoLAN Website...', () {}),
+              _menuItem('About ispc player', () => _showAbout(context)),
             ],
           ),
         ],
@@ -974,10 +976,153 @@ class DesktopMenuBar extends StatelessWidget {
       applicationName: 'ispc player',
       applicationVersion: '1.0.0',
       applicationIcon: const Icon(Icons.play_circle_fill_rounded, color: Color(0xFFFF8800), size: 40),
-      children: const [
-        Text('ispc player is a powerful cross-platform multimedia player.'),
+      children: [
+        const Text('ispc player is a powerful cross-platform multimedia player.'),
+        const SizedBox(height: 12),
+        InkWell(
+          onTap: () => _openUrl(AppConfig.privacyPolicyUrl),
+          child: const Text(
+            AppConfig.privacyPolicyLabel,
+            style: TextStyle(color: Color(0xFF007AFF), decoration: TextDecoration.underline, fontSize: 13),
+          ),
+        ),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: () => _openUrl(AppConfig.termsAndConditionsUrl),
+          child: const Text(
+            AppConfig.termsLabel,
+            style: TextStyle(color: Color(0xFF007AFF), decoration: TextDecoration.underline, fontSize: 13),
+          ),
+        ),
       ],
     );
+  }
+
+  void _showHelp(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dCtx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.help_outline_rounded, color: Color(0xFFFF8800), size: 24),
+            SizedBox(width: 10),
+            Text('ispc player Help', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: SizedBox(
+          width: 440,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'ispc player is a modern multimedia player supporting video, audio, and subtitle streams.',
+                style: TextStyle(fontSize: 13, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              const Divider(height: 1),
+              const SizedBox(height: 14),
+              const Text(
+                'LEGAL & POLICIES',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFFF8800),
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              InkWell(
+                onTap: () => _openUrl(AppConfig.privacyPolicyUrl),
+                borderRadius: BorderRadius.circular(6),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.privacy_tip_outlined, size: 18, color: Color(0xFF007AFF)),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppConfig.privacyPolicyLabel,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF007AFF),
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              AppConfig.privacyPolicyUrl,
+                              style: TextStyle(fontSize: 11, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.open_in_new_rounded, size: 14, color: Colors.grey),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              InkWell(
+                onTap: () => _openUrl(AppConfig.termsAndConditionsUrl),
+                borderRadius: BorderRadius.circular(6),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.gavel_outlined, size: 18, color: Color(0xFF007AFF)),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppConfig.termsLabel,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF007AFF),
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              AppConfig.termsAndConditionsUrl,
+                              style: TextStyle(fontSize: 11, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.open_in_new_rounded, size: 14, color: Colors.grey),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(dCtx),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFFF8800),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {}
   }
 
   void _showPreferences(BuildContext context) {

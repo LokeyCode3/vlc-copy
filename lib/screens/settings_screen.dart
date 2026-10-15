@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../config/app_config.dart';
 import '../providers/media_provider.dart';
 import '../providers/settings_provider.dart';
@@ -152,7 +153,10 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _launchUrl(String url) async {
-    // url_launcher removed — open in browser not needed for offline app
+    final uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {}
   }
 
   Widget _section(String title) => Padding(
