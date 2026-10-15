@@ -1,0 +1,17 @@
+{
+  "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+  "gradle.java.home": "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+      "default": true
+    }
+  ],
+  "gradle.nestedProjects": false,
+  "java.import.gradle.enabled": false,
+  "java.import.gradle.wrapper.enabled": false,
+  "editor.formatOnSave": true,
+  "dart.flutterSdkPath": "/Users/manojprabhakar4509gmail.com/flutter",
+  "java.compile.nullAnalysis.mode": "automatic"
+}

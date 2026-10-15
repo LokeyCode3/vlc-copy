@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="vlc_player">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>ISPC Player</title>
+  <link rel="manifest" href="manifest.json">
+  <script>
+    // Modern Intl.Segmenter polyfill to replace deprecated Intl.v8BreakIterator
+    if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+      (function() {
+        function V8BreakIterator(locales, options) {
+          var type = (options && options.type) || 'word';
+          var granularity = type === 'character' ? 'grapheme' : (type === 'sentence' ? 'sentence' : 'word');
+          this._segmenter = new Intl.Segmenter(locales, { granularity: granularity });
+          this._text = '';
+          this._breaks = [0];
+          this._index = 0;
+        }
+        V8BreakIterator.prototype.adoptText = function(text) {
+          this._text = text || '';
+          this._breaks = [0];
+          this._index = 0;
+          if (this._text.length > 0) {
+            var segments = this._segmenter.segment(this._text);
+            for (var seg of segments) {
+              var end = seg.index + seg.segment.length;
+              if (this._breaks[this._breaks.length - 1] !== end) {
+                this._breaks.push(end);
+              }
+            }
+          }
+        };
+        V8BreakIterator.prototype.first = function() {
+          this._index = 0;
+          return this._breaks[0] || 0;
+        };
+        V8BreakIterator.prototype.next = function() {
+          if (this._index + 1 < this._breaks.length) {
+            this._index++;
+            return this._breaks[this._index];
+          }
+          return -1;
+        };
+        V8BreakIterator.prototype.current = function() {
+          return this._breaks[this._index] !== undefined ? this._breaks[this._index] : -1;
+        };
+        V8BreakIterator.prototype.breakType = function() {
+          return 'word';
+        };
+        try {
+          Object.defineProperty(Intl, 'v8BreakIterator', {
+            value: V8BreakIterator,
+            writable: true,
+            configurable: true,
+            enumerable: false
+          });
+        } catch (e) {
+          Intl.v8BreakIterator = V8BreakIterator;
+        }
+      })();
+    }
+  </script>
+</head>
+<body>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
