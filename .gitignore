@@ -61,3 +61,10 @@ app.*.map.json
 .gradle/
 **/android/.gradle/
 **/android/local.properties
+
+# Build exports & binaries
+*.apk
+*.aab
+releases/
+dist/
+
